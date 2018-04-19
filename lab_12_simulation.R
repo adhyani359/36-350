@@ -22,16 +22,17 @@ run_simulation = function(n_trials, n, p, cutoff) {
     result = model_select(data$covariates,data$responses,cutoff)
     p.vals = c(p.vals,result)
   }
-  hist(p.vals)
+  write.csv(p.vals, file = "pvals.csv",quote = FALSE, row.names = FALSE)
 }
 
-par(mfrow = c(3,3))
-run_simulation(30,100,10,0.05)
-run_simulation(30,100,20,0.05)
-run_simulation(30,100,50,0.05)
-run_simulation(30,1000,10,0.05)
-run_simulation(30,1000,20,0.05)
-run_simulation(30,1000,50,0.05)
-run_simulation(30,10000,10,0.05)
-run_simulation(30,10000,20,0.05)
-run_simulation(30,10000,50,0.05)
+make_plot = function(datapath) {
+  p.vals = read.csv(file = datapath)
+  hist(as.numeric(p.vals$x))
+}
+
+for (n in c(100,1000,10000)) {
+  for (p in c(10,20,50)) {
+    run_simulation(30,n,p,0.05)
+    make_plot("pvals.csv")
+  }
+}
